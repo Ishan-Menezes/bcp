@@ -4,131 +4,7 @@
 <head>
 	<title>BITS Can Preview</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-
-	<link rel="preconnect" href="https://docs.google.com" />
-
-	<style>
-		/* montserrat-regular */
-		@font-face {
-			font-family: 'Montserrat';
-			font-style: normal;
-			font-weight: 400;
-			font-display: swap;
-			src: url('./Montserrat/montserrat-v21-latin-regular.woff2') format("woff2"), url('./Montserrat/montserrat-v21-latin-regular.eot?#iefix') format("embedded-opentype"), url('./Montserrat/montserrat-v21-latin-regular.woff') format("woff"), url('./Montserrat/montserrat-v21-latin-regular.ttf') format("truetype"), url('./Montserrat/montserrat-v21-latin-regular.svg#Montserrat') format("svg");
-		}
-
-		/* montserrat-bold */
-		@font-face {
-			font-family: 'Montserrat';
-			font-style: normal;
-			font-weight: 700;
-			font-display: swap;
-
-			src: url('./Montserrat/montserrat-v21-latin-700.woff2') format("woff2"), url('./Montserrat/montserrat-v21-latin-700.eot?#iefix') format("embedded-opentype"), url('./Montserrat/montserrat-v21-latin-700.woff') format("woff"), url('./Montserrat/montserrat-v21-latin-700.ttf') format("truetype"), url('./Montserrat/montserrat-v21-latin-700.svg#Montserrat') format("svg")
-		}
-
-		h1
-		{
-			margin: 0.5em 0;
-		}
-
-		img {
-			image-rendering: -moz-crisp-edges;
-			image-rendering: -o-crisp-edges;
-			image-rendering: -webkit-optimize-contrast;
-			image-rendering: crisp-edges;
-			-ms-interpolation-mode: nearest-neighbor;
-		}
-
-		html,
-		body {
-			margin: 0;
-			padding: 0;
-			text-align: center;
-			overflow: hidden;
-			background: hsl(110, 80%, 87%);
-		}
-
-		* {
-			font-family: "Montserrat";
-		}
-
-		#container {
-			width: 100vw;
-			height: 100vh;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-		}
-
-		@media screen and (orientation: portrait) {
-			#container {
-				flex-direction: column;
-			}
-
-			#preview {
-				width: 90%;
-				height: 55%;
-			}
-		}
-
-		@media screen and (orientation: landscape) {
-			#container {
-				flex-direction: row;
-			}
-
-			#preview {
-				width: 50%;
-				height: 90%;
-			}
-		}
-
-		#content {
-			color: hsla(0, 0%, 0%, 80%);
-		}
-
-		#preview {
-			position: relative;
-			color: hsla(0, 0%, 100%, 90%);
-		}
-
-		.centered {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-		}
-
-		#customization_input {
-			display: block;
-			font-size: 1.2em;
-			/* width: 20ex; */
-			margin: auto;
-		}
-
-		#customization_output {
-			font-size: 0.8em;
-			width: 25ex;
-			transform: translateX(-50%) translateY(0%) rotate(-90deg);
-		}
-
-		#bottle {
-			max-width: 100%;
-			max-height: 100%;
-		}
-
-		#buy_button {
-			display: block;
-			width: fit-content;
-			margin: auto;
-			border: none;
-			border-radius: 0.5em;
-			background: hsl(110, 53%, 38%);;
-			color: white;
-			padding: 0.5em 1em;
-			text-decoration: none;
-		}
-	</style>
+	<link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
@@ -138,68 +14,23 @@
 			<p id="customization_output" class="centered"></p>
 		</div>
 		<div id="content">
-			<h2>
+			<h3>
 				BITS Can Preview
-			</h2>
+			</h3>
 
 			<input id="customization_input" placeholder="Type customization" maxlength="20" type="text"
 				oninput="update_text()" />
 
-			<p style="display: inline-block">Rotate View</p>
-			<input id="rotation_slider" type="range" min="-180" max="180" step="45" value="0" oninput="update_rotation()">
+			<p>Interact with the image!</p>
+			<!-- <input id="rotation_slider" type="range" min="-180" max="180" step="45" value="0" oninput="update_rotation()"> -->
 
 			<a id="buy_button" href="#" type="submit" onclick="buy()">Get a bottle!</a>
 		</div>
+
 	</div>
-	<script>
-		const customization_input = document.querySelector("#customization_input");
-		const customization_output = document.querySelector("#customization_output");
-		const default_text = "The Rizzler";
 
-		init();
-		
-		function init(){
-			let text = sessionStorage.getItem("text");
-			if (text==null || text.length==0)
-				text = default_text;
-			else
-				customization_input.value = text;
-
-			customization_output.textContent = text;
-		}
-
-		function update_text() {
-			const text = customization_input.value;
-
-			if (text.length == 0)
-				text = default_text
-			
-			sessionStorage.setItem("text", text);
-			customization_output.textContent = text;
-		}
-
-		function update_rotation() {
-			angle = (
-				document
-					.querySelector("#rotation_slider")
-					.value
-			);
-			document.querySelector("#preview").style.transform = `rotate(${angle}deg)`;
-		}
-
-		function buy()
-		{
-			let text = customization_input.value;
-			sessionStorage.setItem("text", text);
-
-			if (text.length == 0)
-				text = default_text;
-
-			new_page_link = `https://docs.google.com/forms/d/e/1FAIpQLSdlKV-BTigb_wjBhug6vJKieOikpwyijXOf6YS2CmHdvRtz7g/viewform?usp=pp_url&entry.691033026=${text}`
-			window.location.replace(new_page_link);
-		}
-
-	</script>
+	<script src="main.js" async></script>
+	<link rel="preconnect" href="https://docs.google.com" />
 </body>
 
 </html>
