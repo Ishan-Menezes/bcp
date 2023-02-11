@@ -140,10 +140,10 @@
 			</h2>
 
 			<input id="customization_input" placeholder="Type customization" maxlength="20" type="text"
-				oninput="update_text()" />
+				onchange="update_text()" />
 
 			<p style="display: inline-block">Rotate View</p>
-			<input id="rotation_slider" type="range" min="-180" max="180" step="45" value="0" oninput="update_rotation()">
+			<input id="rotation_slider" type="range" min="-180" max="180" step="45" value="0" onchange="update_rotation()">
 
 			<a id="buy_button" href="#" type="submit" onclick="buy()">Get a bottle!</a>
 		</div>
@@ -167,10 +167,12 @@
 
 		function update_text() {
 			const text = customization_input.value;
-			sessionStorage.setItem("text", text);
 
-			if (text.length != 0)
-				customization_output.textContent = text;
+			if (text.length == 0)
+				text = default_text
+			
+			sessionStorage.setItem("text", text);
+			customization_output.textContent = text;
 		}
 
 		function update_rotation() {
