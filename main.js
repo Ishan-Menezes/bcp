@@ -38,12 +38,21 @@ function buy() {
 
 // -- ROTATING ELEMENT STUFF --
 const rotatingElement = document.getElementById("preview");
+const rotatingElementBox = rotatingElement.getBoundingClientRect();
+const centers = window.getComputedStyle(rotatingElement).transformOrigin.split(" ");
+const centerX = rotatingElementBox.left + parseInt(centers[0]) - window.scrollX;
+const centerY = rotatingElementBox.top + parseInt(centers[1]) - window.scrollY;
 var rotatingElementMouseDown = false;
-rotatingElement.dataset.prevPercentage = 0;
+// rotatingElement.dataset.rotationNumber = 0;
+rotatingElement.dataset.prevDegrees = 0;
 
 rotatingElement.onmousedown = e => {
     // Set current mouse postion
-    rotatingElement.dataset.mouseDownAt = e.clientX;
+    rotatingElement.dataset.mouseStartRadian = Math.atan2(
+        e.clientX - centerX,
+        e.clientY - centerY
+    );
+    // rotatingElement.dataset.mousePrevRadian =  parseFloat(rotatingElement.dataset.mouseStartRadian);
     rotatingElementMouseDown = true;
 }
 
@@ -51,8 +60,7 @@ window.onmouseup = e => {
     // Reset mouse position
     // Set current percentage along scale
     if (rotatingElementMouseDown) {
-        rotatingElement.dataset.mouseDownAt = 0;
-        rotatingElement.dataset.prevPercentage = rotatingElement.dataset.nextPercentage;
+        rotatingElement.dataset.prevDegrees = rotatingElement.dataset.nextDegrees;
         rotatingElementMouseDown = false;
     }
 }
@@ -63,27 +71,39 @@ window.onmousemove = e => {
 
 function animateRotatingElement(e, rotatingElement) {
     // If no change, return
-    if (rotatingElement.dataset.mouseDownAt === 0) return;
+    if (rotatingElement.dataset.mouseDownAtX === 0 || rotatingElement.dataset.mouseDownAtY === 0) return;
 
     // Set slider size
-    const maxDelta = window.innerWidth / 5;
+    // const maxDelta = window.innerWidth / 5;
+
 
     // As mouse moves, get change in position relative to starting position
-    const mouseDelta = parseFloat(rotatingElement.dataset.mouseDownAt) - e.clientX;
+    // const mouseDelta = e.clientX - parseFloat(rotatingElement.dataset.mouseDownAt);
+    const mouseCurrentRadian = Math.atan2(
+        e.clientX - centerX,
+        e.clientY - centerY
+    );
 
-    // Calculate percentage over total
-    const percentage = mouseDelta * 100 / maxDelta;
-    const nextPercentage = parseFloat(rotatingElement.dataset.prevPercentage) + percentage;
+    // if(
+    //     Math.abs(parseFloat(rotatingElement.dataset.mousePrevRadian)) > 3.1 &&
+    //     Math.abs(mouseCurrentRadian) > 3.1 &&
+    //     Math.abs(parseFloat(rotatingElement.dataset.mousePrevRadian) - mouseCurrentRadian) < 0.2
+    // ) rotatingElement.dataset.rotationNumber++;
 
-    // Save percentage for next mouse scroll after release
-    // to prevent reset of element on new mouse click
-    rotatingElement.dataset.nextPercentage = nextPercentage;
+    // const mouseDeltaRadian = (
+    //     parseInt(rotatingElement.dataset.rotationNumber) * Math.PI + 
+    //     (rotatingElement.dataset.mouseStartRadian - mouseCurrentRadian)
+    // );
+    const mouseDeltaRadian = rotatingElement.dataset.mouseStartRadian - mouseCurrentRadian;
+    const mouseDeltaDegrees = (mouseDeltaRadian * (180 / Math.PI));
+    rotatingElement.dataset.nextDegrees = parseFloat(rotatingElement.dataset.prevDegrees) + mouseDeltaDegrees;
 
+    rotatingElement.style.transform = `rotate(${parseInt(rotatingElement.dataset.nextDegrees)}deg)`;
     // Animate translation of element
-    rotatingElement.animate({
-        transform: `rotate(${nextPercentage}deg)`
-    }, {
-        duration: 500,
-        fill: "forwards"
-    })
+    // rotatingElement.animate({
+    //     transform: `rotate(${parseFloat(rotatingElement.dataset.nextDegrees)}deg)`
+    // }, {
+    //     duration: 500,
+    //     fill: "forwards"
+    // })
 }
